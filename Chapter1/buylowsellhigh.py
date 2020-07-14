@@ -43,7 +43,7 @@ portfolio['positions'] = (positions.multiply(goog_data_signal['price'], axis=0))
 portfolio['cash'] = initial_capital - (positions.diff().multiply(goog_data_signal['price'], axis=0)).cumsum()
 portfolio['total'] = portfolio['positions'] + portfolio['cash']
 portfolio.plot()
-plt.show()
+# plt.show()
 
 
 fig = plt.figure()
