@@ -69,3 +69,12 @@ ema_s.plot(ax=ax1, color='r', lw=2., legend=True)
 ax2 = fig.add_subplot(212, ylabel='APO')
 apo.plot(ax=ax2, color='black', lw=2., legend=True)
 plt.show()
+
+'''
+Difference in behavior between fast and slow EMAs. The faster
+one is more reactive to new price observations, and the slower one is less reactive to new
+price observations and decays slower. The APO values are positive when prices are
+breaking out to the upside, and the magnitude of the APO values captures the magnitude
+of the breakout. The APO values are negative when prices are breaking out to the
+downside, and the magnitude of the APO values captures the magnitude of the breakout.
+'''
