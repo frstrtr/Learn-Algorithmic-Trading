@@ -4,7 +4,7 @@ from pandas_datareader import data
 
 start_date = '2014-01-01'
 end_date = '2018-01-01'
-SRC_DATA_FILENAME = 'goog_data.pkl'
+SRC_DATA_FILENAME = 'nicehash_ETHBTC_data_days.pk1'
 
 try:
   goog_data2 = pd.read_pickle(SRC_DATA_FILENAME)
@@ -12,9 +12,9 @@ except FileNotFoundError:
   goog_data2 = data.DataReader('GOOG', 'yahoo', start_date, end_date)
   goog_data2.to_pickle(SRC_DATA_FILENAME)
 
-goog_data = goog_data2.tail(620)
+goog_data = goog_data2 #.tail(620)
 
-close = goog_data['Close']
+close = goog_data['close']
 
 '''
 
@@ -31,7 +31,7 @@ Where: n = Time Period
 '''
 import statistics as stats
 
-time_period = 20 # number of days over which to average
+time_period = 5 # number of days over which to average
 history = [] # to track a history of prices
 sma_values = [] # to track simple moving average values
 for close_price in close:
@@ -42,15 +42,15 @@ for close_price in close:
   sma_values.append(stats.mean(history))
 
 goog_data = goog_data.assign(ClosePrice=pd.Series(close, index=goog_data.index))
-goog_data = goog_data.assign(Simple20DayMovingAverage=pd.Series(sma_values, index=goog_data.index))
+goog_data = goog_data.assign(SimpleN_DayMovingAverage=pd.Series(sma_values, index=goog_data.index))
 
 close_price = goog_data['ClosePrice']
-sma = goog_data['Simple20DayMovingAverage']
+sma = goog_data['SimpleN_DayMovingAverage']
 
 import matplotlib.pyplot as plt
 
 fig = plt.figure()
-ax1 = fig.add_subplot(111, ylabel='Google price in $')
+ax1 = fig.add_subplot(111, ylabel='ETH price in BTC')
 close_price.plot(ax=ax1, color='g', lw=2., legend=True)
 sma.plot(ax=ax1, color='r', lw=2., legend=True)
 plt.show()
