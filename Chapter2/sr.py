@@ -25,7 +25,7 @@ nicehash_data_signal['price'] = nicehash_data['close']
 
 
 # bin_width - the time window in the price that is used to calculate the resistance and support levels.
-def trading_support_resistance(data, bin_width=12, margin=38):
+def trading_support_resistance(data, bin_width=12, margin=38, tolerance = 2):
     margin = margin / 100  # convert %
     data['sup_tolerance'] = pd.Series(np.zeros(len(data)))
     data['res_tolerance'] = pd.Series(np.zeros(len(data)))
@@ -59,6 +59,9 @@ def trading_support_resistance(data, bin_width=12, margin=38):
         else:
             in_support = 0
             in_resistance = 0
+            # a buy order is sent when a price stays in the resistance
+            # tolerance margin for 2 consecutive days, and that a sell order is sent when a price stays in
+            # the support tolerance margin for 2 consecutive days.
         if in_resistance > 2:
             data['signal'][x] = 1
         elif in_support > 2:
@@ -175,20 +178,24 @@ print ('margin (%)\t window(days)\t balance (BTC)')
 for marg in range(1, margin_max+1):  # margin 1..99 %
 
     for window in range(1, window_max+1):  # window length in days
-        # print(marg,'\t\t',window, end='\r')
-        trading_support_resistance(nicehash_data_signal, window, marg)
+        
+        for tol in range(1,window-1): # tolerance iter for 1 to window-1 value
+            # print(marg,'\t\t',window, end='\r')
+            trading_support_resistance(nicehash_data_signal, window, marg, tol)
 
-        positions = pd.DataFrame(index=nicehash_data_signal.index).fillna(0.0)
-        portfolio = pd.DataFrame(index=nicehash_data_signal.index).fillna(0.0)
+            positions = pd.DataFrame(index=nicehash_data_signal.index).fillna(0.0)
+            portfolio = pd.DataFrame(index=nicehash_data_signal.index).fillna(0.0)
 
-        positions['ETHBTC'] = nicehash_data_signal['signal']
-        portfolio['positions'] = (positions.multiply(nicehash_data_signal['price'], axis=0))
-        portfolio['cash'] = initial_capital - (positions.diff().multiply(nicehash_data_signal['price'], axis=0)).cumsum()
-        portfolio['total'] = portfolio['positions'] + portfolio['cash']
+            positions['ETHBTC'] = nicehash_data_signal['signal']
+            portfolio['positions'] = (positions.multiply(nicehash_data_signal['price'], axis=0))
+            portfolio['cash'] = initial_capital - (positions.diff().multiply(nicehash_data_signal['price'], axis=0)).cumsum()
+            portfolio['total'] = portfolio['positions'] + portfolio['cash']
 
-        balance = portfolio['total'].iloc[-1] - initial_capital
+            balance = portfolio['total'].iloc[-1] - initial_capital
 
-        sol[marg-1][window-1] = balance
+            if balance > sol[marg-1][window-1]:
+                sol[marg-1][window-1] = balance
+            
 
     # print(marg, sol[marg-1])
     # print()
