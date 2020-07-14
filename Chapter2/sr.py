@@ -212,3 +212,5 @@ print("%08.8f" % max(abs_max_transposed[2]))
 index_max = abs_max_transposed[2].index(max(abs_max_transposed[2]))
 print('Margin =', abs_max_transposed[0][index_max],
       'Window =', abs_max_transposed[1][index_max])
+
+# todo implement window quantation according to data (days/hours/seconds)
