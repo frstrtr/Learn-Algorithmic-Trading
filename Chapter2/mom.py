@@ -48,10 +48,10 @@ mom = goog_data['MomentumFromPrice20DaysAgo']
 
 
 fig = plt.figure()
-ax1 = fig.add_subplot(211, ylabel='Google price in $')
+ax1 = fig.add_subplot(211, ylabel='ETH price in BTC')
 close_price.plot(ax=ax1, color='g', lw=2., legend=True)
 plt.grid()
-ax2 = fig.add_subplot(212, ylabel='Momentum in $')
+ax2 = fig.add_subplot(212, ylabel='Momentum in BTC')
 mom.plot(ax=ax2, color='b', lw=2., legend=True)
 plt.grid()
 plt.show()
