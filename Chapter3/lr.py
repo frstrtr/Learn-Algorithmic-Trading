@@ -16,17 +16,17 @@ def load_financial_data(start_date, end_date, output_file):
     return df
 
 def create_classification_trading_condition(df):
-    df['Open-Close'] = df.Open - df.Close
-    df['High-Low'] = df.High - df.Low
+    df['Open-Close'] = df.open - df.close
+    df['High-Low'] = df.high - df.low
     df = df.dropna()
     X = df[['Open-Close', 'High-Low']]
-    Y = np.where(df['Close'].shift(-1) > df['Close'], 1, -1)
+    Y = np.where(df['close'].shift(-1) > df['close'], 1, -1)
     return (df, X, Y)
 
 def create_regression_trading_condition(df):
-    df['Open-Close'] = df.Open - df.Close
-    df['High-Low'] = df.High - df.Low
-    df['Target'] = df['Close'].shift(-1) - df['Close']
+    df['Open-Close'] = df.open - df.close
+    df['High-Low'] = df.high - df.low
+    df['Target'] = df['close'].shift(-1) - df['close']
     df = df.dropna()
     X = df[['Open-Close', 'High-Low']]
     Y = df[['Target']]
@@ -38,7 +38,7 @@ def create_train_split_group(X, Y, split_ratio=0.8):
 goog_data = load_financial_data(
     start_date='2001-01-01',
     end_date='2018-01-01',
-    output_file='goog_data_large.pkl')
+    output_file='nicehash_ETHBTC_data_days.pk1')
 
 goog_data, X, Y = create_regression_trading_condition(goog_data)
 
@@ -55,7 +55,7 @@ print('Coefficients: \n', ols.coef_)
 
 goog_data['Predicted_Signal'] = ols.predict(X)
 goog_data['GOOG_Returns'] = np.log(
-    goog_data['Close'] / goog_data['Close'].shift(1))
+    goog_data['close'] / goog_data['close'].shift(1))
 
 print(goog_data.head())
 def calculate_return(df, split_value, symbol):

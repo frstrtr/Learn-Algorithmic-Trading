@@ -53,5 +53,5 @@ close_price.plot(ax=ax1, color='g', lw=2., legend=True)
 plt.grid()
 ax2 = fig.add_subplot(212, ylabel='Momentum in BTC')
 mom.plot(ax=ax2, color='b', lw=2., legend=True)
-plt.grid()
+plt.grid() # Show grid
 plt.show()
