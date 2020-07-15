@@ -2,6 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pandas_datareader import data
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.graphics.tsaplots import plot_pacf
+from statsmodels.tsa.arima_model import ARIMA
+from matplotlib import pyplot
 
 
 start_date = '2001-01-01'
@@ -70,5 +74,20 @@ def test_stationarity(timeseries):
 
 
 test_stationarity(goog_data['Adj Close'])
+print ()
 
 test_stationarity(goog_monthly_return[1:])
+
+
+pyplot.figure()
+pyplot.subplot(211)
+plot_acf(goog_monthly_return[1:], ax=pyplot.gca(),lags=10)
+pyplot.subplot(212)
+plot_pacf(goog_monthly_return[1:], ax=pyplot.gca(),lags=10)
+pyplot.show()
+
+model = ARIMA(goog_monthly_return[1:], order=(2, 0, 2))
+fitted_results = model.fit()
+goog_monthly_return[1:].plot()
+fitted_results.fittedvalues.plot(color='red')
+plt.show()
