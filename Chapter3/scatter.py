@@ -12,10 +12,10 @@ from sklearn.metrics import mean_squared_error, r2_score
 def load_financial_data(start_date, end_date, output_file):
     try:
         df = pd.read_pickle(output_file)
-        print('File data found...reading GOOG data')
+        print('File data found...reading ETHBTC data')
     except FileNotFoundError:
-        print('File not found...downloading the GOOG data')
-        df = data.DataReader('GOOG', 'yahoo', start_date, end_date)
+        print('File not found...downloading the ETHBTC data')
+        df = data.DataReader('ETHBTC', 'yahoo', start_date, end_date)
         df.to_pickle(output_file)
     return df
 
@@ -34,15 +34,15 @@ def create_train_split_group(X, Y, split_ratio=0.8):
     return train_test_split(X, Y, shuffle=False, train_size=split_ratio)
 
 
-goog_data = load_financial_data(
+ETHBTC_data = load_financial_data(
     start_date='2001-01-01',
     end_date='2018-01-01',
     output_file='nicehash_ETHBTC_data_days.pk1')
 
-goog_data, X, Y = create_regression_trading_condition(goog_data)
+ETHBTC_data, X, Y = create_regression_trading_condition(ETHBTC_data)
 
 pd.plotting.scatter_matrix(
-    goog_data[['Open-Close', 'High-Low', 'Target']], grid=True, diagonal='kde', alpha=0.8)
+    ETHBTC_data[['Open-Close', 'High-Low', 'Target']], grid=True, diagonal='kde', alpha=0.8)
 
 plt.show()
 
@@ -66,16 +66,16 @@ print("Mean squared error: %.2f" %
 # Explained variance score: 1 is perfect prediction
 print('Variance score: %.2f' % r2_score(Y_test, ols.predict(X_test)))
 
-goog_data['Predicted_Signal'] = ols.predict(X)
-goog_data['GOOG_Returns'] = np.log(goog_data['close'] /
-                                   goog_data['close'].shift(1))
+ETHBTC_data['Predicted_Signal'] = ols.predict(X)
+ETHBTC_data['ETHBTC_Returns'] = np.log(ETHBTC_data['close'] /
+                                       ETHBTC_data['close'].shift(1))
 
 
 def calculate_return(df, split_value, symbol):
-    cum_goog_return = df[split_value:]['%s_Returns' % symbol].cumsum() * 100
+    cum_ETHBTC_return = df[split_value:]['%s_Returns' % symbol].cumsum() * 100
     df['Strategy_Returns'] = df['%s_Returns' %
                                 symbol] * df['Predicted_Signal'].shift(1)
-    return cum_goog_return
+    return cum_ETHBTC_return
 
 
 def calculate_strategy_return(df, split_value, symbol):
@@ -83,10 +83,10 @@ def calculate_strategy_return(df, split_value, symbol):
     return cum_strategy_return
 
 
-cum_goog_return = calculate_return(
-    goog_data, split_value=len(X_train), symbol='GOOG')
-cum_strategy_return = calculate_strategy_return(goog_data,
-                                                split_value=len(X_train), symbol='GOOG')
+cum_ETHBTC_return = calculate_return(
+    ETHBTC_data, split_value=len(X_train), symbol='ETHBTC')
+cum_strategy_return = calculate_strategy_return(ETHBTC_data,
+                                                split_value=len(X_train), symbol='ETHBTC')
 
 
 def plot_chart(cum_symbol_return, cum_strategy_return, symbol):
@@ -96,7 +96,7 @@ def plot_chart(cum_symbol_return, cum_strategy_return, symbol):
     plt.legend()
 
 
-plot_chart(cum_goog_return, cum_strategy_return, symbol='GOOG')
+plot_chart(cum_ETHBTC_return, cum_strategy_return, symbol='ETHBTC')
 
 
 def sharpe_ratio(symbol_returns, strategy_returns):
@@ -105,4 +105,4 @@ def sharpe_ratio(symbol_returns, strategy_returns):
     return sharpe.mean()
 
 
-print(sharpe_ratio(cum_strategy_return, cum_goog_return))
+print(sharpe_ratio(cum_strategy_return, cum_ETHBTC_return))
