@@ -61,6 +61,9 @@ plt.show()
 import sys
 sys.exit(0)
 
+financial_data = goog_data
+signals = ts
+
 # You are going to set your initial amount of money you want
 # to invest --- here it is 10,000
 initial_capital = float(7.0)
