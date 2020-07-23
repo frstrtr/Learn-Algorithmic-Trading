@@ -10,13 +10,14 @@ def load_financial_data(start_date, end_date,output_file):
         print('File data found...reading GOOG data')
     except FileNotFoundError:
         print('File not found...downloading the GOOG data')
-        df = data.DataReader('GOOG', 'yahoo', start_date, end_date)
-        df.to_pickle(output_file)
+        # df = data.DataReader('GOOG', 'yahoo', start_date, end_date)
+        # df.to_pickle(output_file)
+        df = None
     return df
 
 goog_data=load_financial_data(start_date='2001-01-01',
                     end_date = '2018-01-01',
-                    output_file='goog_data.pkl')
+                    output_file='nicehash_ETHBTC_data_days.pk1')
 
 
 
@@ -26,8 +27,8 @@ def naive_momentum_trading(financial_data, nb_conseq_days):
     cons_day=0
     prior_price=0
     init=True
-    for k in range(len(financial_data['Adj Close'])):
-        price=financial_data['Adj Close'][k]
+    for k in range(len(financial_data['close'])):
+        price=financial_data['close'][k]
         if init:
             prior_price=price
             init=False
@@ -51,15 +52,15 @@ def naive_momentum_trading(financial_data, nb_conseq_days):
 ts=naive_momentum_trading(goog_data, 5)
 
 fig = plt.figure()
-ax1 = fig.add_subplot(111, ylabel='Google price in $')
-goog_data["Adj Close"].plot(ax=ax1, color='g', lw=.5)
+ax1 = fig.add_subplot(111, ylabel='ETH price in BTC')
+goog_data["close"].plot(ax=ax1, color='g', lw=.5)
 
 ax1.plot(ts.loc[ts.orders== 1.0].index,
-         goog_data["Adj Close"][ts.orders == 1],
+         goog_data["close"][ts.orders == 1],
          '^', markersize=7, color='k')
 
 ax1.plot(ts.loc[ts.orders== -1.0].index,
-         goog_data["Adj Close"][ts.orders == -1],
+         goog_data["close"][ts.orders == -1],
          'v', markersize=7, color='k')
 
 plt.legend(["Price","Buy","Sell"])

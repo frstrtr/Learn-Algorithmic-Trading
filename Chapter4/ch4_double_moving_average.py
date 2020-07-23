@@ -69,9 +69,9 @@ initial_capital = float(7.0)
 # Remember the index is still the same as signals
 positions = pd.DataFrame(index=signals.index).fillna(0.0)
 
-# You are going to buy 10 shares of MSFT when signal is 1
-# You are going to sell 10 shares of MSFT when signal is -1
-# You will assign these values to the column MSFT of the
+# You are going to buy 10 shares of ETH when signal is 1
+# You are going to sell 10 shares of ETH when signal is -1
+# You will assign these values to the column ETH of the
 # dataframe positions
 positions['ETH'] = 10 * signals['signal']
 
